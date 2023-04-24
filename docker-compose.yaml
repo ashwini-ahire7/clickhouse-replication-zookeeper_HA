@@ -1,0 +1,146 @@
+version: "3.9"
+services:
+  zookeeper1:
+    image: 'bitnami/zookeeper:latest'
+    hostname: zookeeper1
+    container_name: zookeeper1
+    networks:
+      my-network:
+        ipv4_address: 172.20.0.11
+    extra_hosts:
+      - "zookeeper2:172.20.0.12"
+      - "zookeeper3:172.20.0.13"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOO_SERVER_ID=1
+      - ZOO_SERVERS=0.0.0.0:2888:3888,zookeeper2:2888:3888,zookeeper3:2888:3888  
+    ports:
+      - "2181:2181"
+      - "2888:2888"
+      - "3888:3888"
+  zookeeper2:
+    image: 'bitnami/zookeeper:latest'
+    hostname: zookeeper2
+    container_name: zookeeper2
+    networks:
+      my-network:
+        ipv4_address: 172.20.0.12
+    extra_hosts:
+      - "zookeeper1:172.20.0.11"
+      - "zookeeper3:172.20.0.13"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOO_SERVER_ID=2
+      - ZOO_SERVERS=zookeeper1:2888:3888,0.0.0.0:2888:3888,zookeeper3:2888:3888
+    ports:
+      - "2182:2181"
+      - "2889:2888"
+      - "3889:3888"
+  zookeeper3:
+    image: 'bitnami/zookeeper:latest'
+    hostname: zookeeper3
+    container_name: zookeeper3
+    networks:
+      my-network:
+        ipv4_address: 172.20.0.13
+    extra_hosts:
+      - "zookeeper1:172.20.0.11"
+      - "zookeeper2:172.20.0.12"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOO_SERVER_ID=3
+      - ZOO_SERVERS=zookeeper1:2888:3888,zookeeper2:2888:3888,0.0.0.0:2888:3888
+    ports:
+      - "2183:2181"
+      - "2890:2888"
+      - "3890:3888"
+  clickhouse01:
+    image: clickhouse/clickhouse-server:latest
+    hostname: clickhouse01
+    container_name: clickhouse01
+    ports:
+      - 9001:9000
+      - 8124:8123
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      my-network:
+        ipv4_address: 172.20.0.2
+    extra_hosts:
+      - "clickhouse02:172.20.0.3"
+      - "clickhouse03:172.20.0.4"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+    volumes:
+      - ./config.xml:/etc/clickhouse-server/config.xml
+      - ./clusters.xml:/etc/clickhouse-server/config.d/clusters.xml
+      - ./listen_host.xml:/etc/clickhouse-server/config.d/listen_host.xml
+      - ./zookeeper.xml:/etc/clickhouse-server/config.d/zookeeper.xml
+      - ./macros_1.xml:/etc/clickhouse-server/config.d/macros.xml   
+  clickhouse02:
+    image: clickhouse/clickhouse-server:latest
+    hostname: clickhouse02
+    container_name: clickhouse02
+    ports:
+      - 9002:9000
+      - 8125:8123
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      my-network:
+        ipv4_address: 172.20.0.3
+    extra_hosts:
+      - "clickhouse01:172.20.0.2"
+      - "clickhouse03:172.20.0.4"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+    volumes:
+      - ./config.xml:/etc/clickhouse-server/config.xml
+      - ./clusters.xml:/etc/clickhouse-server/config.d/clusters.xml
+      - ./listen_host.xml:/etc/clickhouse-server/config.d/listen_host.xml
+      - ./zookeeper.xml:/etc/clickhouse-server/config.d/zookeeper.xml
+      - ./macros_2.xml:/etc/clickhouse-server/config.d/macros.xml
+  clickhouse03:
+    image: clickhouse/clickhouse-server:latest
+    hostname: clickhouse03
+    container_name: clickhouse03
+    ports:
+      - 9003:9000
+      - 8126:8123
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      my-network:
+        ipv4_address: 172.20.0.4
+    extra_hosts:
+      - "clickhouse01:172.20.0.2"
+      - "clickhouse02:172.20.0.3"
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+    volumes:
+      - ./config.xml:/etc/clickhouse-server/config.xml
+      - ./clusters.xml:/etc/clickhouse-server/config.d/clusters.xml
+      - ./listen_host.xml:/etc/clickhouse-server/config.d/listen_host.xml
+      - ./zookeeper.xml:/etc/clickhouse-server/config.d/zookeeper.xml
+      - ./macros_3.xml:/etc/clickhouse-server/config.d/macros.xml
+networks:
+  my-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
