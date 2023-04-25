@@ -14,8 +14,8 @@ Creating clickhouse01 ... done
 Attaching to zookeeper3, zookeeper2, zookeeper1, clickhouse01, clickhouse02
 ```
 
-
 To take it down - docker-compose down
+
 
 ![Screenshot 2023-04-24 at 12 59 53 PM](https://user-images.githubusercontent.com/124853365/233915986-0ab036b4-eb59-437d-b52f-c6d09020f7f6.png)
 
