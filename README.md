@@ -3,14 +3,14 @@
 
 Download `complete-project.tar.gz` file, uncompressed it and go to directory and run `docker-compose up` to start the setup.
 
-root@ip-10-0-6-24:~/ashwini_work/clickhouse_Ashwini/clickhouse_replication_zookeeper_HA# docker-compose up
+```root@ip-10-0-6-24:~/ashwini_work/clickhouse_Ashwini/clickhouse_replication_zookeeper_HA# docker-compose up
 Creating network "clickhouse_replication_zookeeper_ha_my-network" with driver "bridge"
 Creating zookeeper3 ... done
 Creating zookeeper1 ... done
 Creating zookeeper2 ... done
 Creating clickhouse03 ... done
 Creating clickhouse01 ... done
-Attaching to zookeeper3, zookeeper2, zookeeper1, clickhouse01, clickhouse02
+Attaching to zookeeper3, zookeeper2, zookeeper1, clickhouse01, clickhouse02```
 
 To take it down - docker-compose down
 
