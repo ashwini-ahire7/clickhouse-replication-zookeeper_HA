@@ -1,10 +1,26 @@
 # clickhouse-replication-zookeeper_HA
-3 Node replicated cluster with 3 node Zookeeper Cluster to have fault tolerant setup
 
-Download `complete-project.tar.gz` file, uncompressed it and go to directory and run `docker-compose up` to start the setup.
+Data Replication in ClickHouse Cluster with 3 node (Docker Based Setup) and 3 node Zookeeper Cluster to have fault tolerant setup supporting replication.
+
+## Requirement -- Download these files from Github repo
+Download `complete-project.tar.gz` file, uncompressed it and go to directory to run docker-compose command to start setup.
 
 ```
-root@ip-10-0-6-24:~/ashwini_work/clickhouse_Ashwini/clickhouse_replication_zookeeper_HA# docker-compose up
+docker-compose.yaml
+config.xml
+clusters.xml
+listen_host.xml
+zookeeper.xml
+macros_1.xml
+macros_2.xml
+macros_3.xml
+```
+
+Execute below commands from docker Host :
+-d to run process in background.
+
+```
+root@ip-10-0-6-24:~/ashwini_work/clickhouse_Ashwini/clickhouse_replication_zookeeper_HA# docker-compose up -d
 Creating network "clickhouse_replication_zookeeper_ha_my-network" with driver "bridge"
 Creating zookeeper3 ... done
 Creating zookeeper1 ... done
@@ -13,6 +29,11 @@ Creating clickhouse03 ... done
 Creating clickhouse01 ... done
 Attaching to zookeeper3, zookeeper2, zookeeper1, clickhouse01, clickhouse02
 ```
+
+When containers are running, connect to clickhouse-client and test
+
+
+
 
 To take it down - docker-compose down
 
