@@ -102,7 +102,54 @@ Query id: 43da5375-4f3d-4ab7-aa55-064d43bb7bc0
 
 3 rows in set. Elapsed: 0.552 sec.
 
+clickhouse01 :) SELECT * FROM system.zookeeper WHERE path = '/clickhouse/tables/cluster_demo_ash/1/Example_DB/product' FORMAT Vertical ;
+
+SELECT *
+FROM system.zookeeper
+WHERE path = '/clickhouse/tables/cluster_demo_ash/1/Example_DB/product'
+FORMAT Vertical
+
+Query id: 407dd4c7-e4bd-4ad3-986d-1d6c52f22eac
+
+Row 1:
+──────
+name:  alter_partition_version
+value:
+path:  /clickhouse/tables/cluster_demo_ash/1/Example_DB/product
+
+Row 2:
+──────
+name:  metadata
+value: metadata format version: 1
+date column:
+sampling expression: category
+index granularity: 8192
+mode: 0
+sign column:
+primary key: product_id, toDate(created_at), category
+data format version: 1
+partition key: toYYYYMM(created_at)
+granularity bytes: 10485760
+
+path:  /clickhouse/tables/cluster_demo_ash/1/Example_DB/product
+
+Row 3:
+──────
+name:  temp
+value:
+path:  /clickhouse/tables/cluster_demo_ash/1/Example_DB/product
+
+Row 4:
+──────
+name:  table_shared_id
+----- O/P Truncated -----
+```
+
+Insert data from multiple clickhouse nodes as all nodes are writable and then verify.
+```
+
 clickhouse01 :) INSERT INTO Example_DB.product VALUES (now(),9832,11);
+
 
 INSERT INTO Example_DB.product FORMAT Values
 
@@ -134,7 +181,6 @@ Query id: d2e4a42c-9edd-4338-b425-554c4ed1c8c3
 6 rows in set. Elapsed: 0.003 sec.
 
 clickhouse01 :)
-
 
 ```
 
