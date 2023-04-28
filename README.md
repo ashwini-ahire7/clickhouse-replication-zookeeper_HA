@@ -32,11 +32,122 @@ Attaching to zookeeper3, zookeeper2, zookeeper1, clickhouse01, clickhouse02
 
 When containers are running, connect to clickhouse-client and test
 
+```
+clickhouse01 :) CREATE DATABASE IF NOT EXISTS Example_DB ON CLUSTER `{cluster}`
+
+CREATE DATABASE IF NOT EXISTS Example_DB ON CLUSTER `{cluster}`
+
+Query id: b294309d-950e-4d41-83c3-3e6398f07bf4
+
+┌─host─────────┬─port─┬─status─┬─error─┬─num_hosts_remaining─┬─num_hosts_active─┐
+│ clickhouse01 │ 9000 │      0 │       │                   2 │                0 │
+│ clickhouse02 │ 9000 │      0 │       │                   1 │                0 │
+│ clickhouse03 │ 9000 │      0 │       │                   0 │                0 │
+└──────────────┴──────┴────────┴───────┴─────────────────────┴──────────────────┘
+
+3 rows in set. Elapsed: 0.190 sec.
+
+clickhouse01 :)
+
+clickhouse01 :) SELECT hostName(), * FROM clusterAllReplicas('cluster_demo_ash', system,
+                one);
+
+SELECT
+    hostName(),
+    *
+FROM clusterAllReplicas('cluster_demo_ash', system, one)
+
+Query id: ce15bd4b-af92-41e5-99b7-3bbcb4d4bffe
+
+┌─hostName()───┬─dummy─┐
+│ clickhouse01 │     0 │
+└──────────────┴───────┘
+┌─hostName()───┬─dummy─┐
+│ clickhouse02 │     0 │
+└──────────────┴───────┘
+┌─hostName()───┬─dummy─┐
+│ clickhouse03 │     0 │
+└──────────────┴───────┘
+
+3 rows in set. Elapsed: 0.016 sec.
+
+clickhouse01 :) CREATE TABLE Example_DB.product ON CLUSTER '{cluster}'
+                               (
+                                    created_at DateTime,
+                                    product_id UInt32,
+                                    category UInt32
+                               ) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{cluster}/{shard}/Example_DB/product', '{replica}')
+                               PARTITION BY toYYYYMM(created_at)
+                               ORDER BY (product_id, toDate(created_at), category)
+                               SAMPLE BY category;
+
+CREATE TABLE Example_DB.product ON CLUSTER `{cluster}`
+(
+    `created_at` DateTime,
+    `product_id` UInt32,
+    `category` UInt32
+)
+ENGINE = ReplicatedMergeTree('/clickhouse/tables/{cluster}/{shard}/Example_DB/product', '{replica}')
+PARTITION BY toYYYYMM(created_at)
+ORDER BY (product_id, toDate(created_at), category)
+SAMPLE BY category
+
+Query id: 43da5375-4f3d-4ab7-aa55-064d43bb7bc0
+
+┌─host─────────┬─port─┬─status─┬─error─┬─num_hosts_remaining─┬─num_hosts_active─┐
+│ clickhouse01 │ 9000 │      0 │       │                   2 │                0 │
+│ clickhouse02 │ 9000 │      0 │       │                   1 │                0 │
+│ clickhouse03 │ 9000 │      0 │       │                   0 │                0 │
+└──────────────┴──────┴────────┴───────┴─────────────────────┴──────────────────┘
+
+3 rows in set. Elapsed: 0.552 sec.
+
+clickhouse01 :) INSERT INTO Example_DB.product VALUES (now(),9832,11);
+
+INSERT INTO Example_DB.product FORMAT Values
+
+Query id: 6cd6e9b8-fbce-4dea-a1b1-f3e8b8e5b542
+
+Ok.
+
+1 row in set. Elapsed: 0.074 sec.
+
+clickhouse01 :) SELECT *
+                FROM Example_DB.product;
+
+SELECT *
+FROM Example_DB.product
+
+Query id: d2e4a42c-9edd-4338-b425-554c4ed1c8c3
+
+┌──────────created_at─┬─product_id─┬─category─┐
+│ 2023-04-24 04:58:22 │         12 │       14 │
+│ 2023-04-24 04:57:50 │        987 │       13 │
+│ 2023-04-24 04:57:46 │       1834 │       15 │
+│ 2023-04-24 04:57:42 │       5672 │       16 │
+│ 2023-04-24 04:57:09 │       9832 │       11 │
+└─────────────────────┴────────────┴──────────┘
+┌──────────created_at─┬─product_id─┬─category─┐
+│ 2023-04-24 04:58:25 │       1834 │       15 │
+└─────────────────────┴────────────┴──────────┘
+
+6 rows in set. Elapsed: 0.003 sec.
+
+clickhouse01 :)
+
+
+```
 
 
 
-To take it down - docker-compose down
 
+To destoy cluster, run below command
+
+```
+docker-compose down
+```
+
+Attached screenshot for reference 
 
 ![Screenshot 2023-04-24 at 12 59 53 PM](https://user-images.githubusercontent.com/124853365/233915986-0ab036b4-eb59-437d-b52f-c6d09020f7f6.png)
 
