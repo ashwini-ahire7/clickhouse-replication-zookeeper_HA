@@ -25,9 +25,10 @@ Creating network "clickhouse_replication_zookeeper_ha_my-network" with driver "b
 Creating zookeeper3 ... done
 Creating zookeeper1 ... done
 Creating zookeeper2 ... done
-Creating clickhouse03 ... done
+Creating clickhouse02 ... done
 Creating clickhouse01 ... done
-Attaching to zookeeper3, zookeeper2, zookeeper1, clickhouse01, clickhouse02
+Creating clickhouse03 ... done
+Attaching to zookeeper3, zookeeper2, zookeeper1, clickhouse01, clickhouse02, clickhouse03
 ```
 
 When containers are running, connect to clickhouse-client and test
